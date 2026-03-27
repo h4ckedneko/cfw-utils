@@ -1,0 +1,40 @@
+{
+  "name": "cfw-utils",
+  "version": "0.0.1",
+  "description": "A set of utility functions for Cloudflare Workers.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h4ckedneko/cfwutils.git"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "check": "tsc",
+    "format": "dprint fmt",
+    "prepare": "lefthook install",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "^0.18.2",
+    "@cloudflare/workers-types": "^4.20260317.1",
+    "dprint": "^0.53.1",
+    "lefthook": "^2.1.4",
+    "publint": "^0.3.18",
+    "tsdown": "^0.21.6",
+    "typescript": "^6.0.2"
+  }
+}

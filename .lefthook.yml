@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=./node_modules/lefthook/schema.json
+
+pre-commit:
+  jobs:
+    - name: format
+      run: npx dprint fmt --allow-no-files {staged_files}
+      stage_fixed: true
