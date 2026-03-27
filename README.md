@@ -35,7 +35,6 @@ A reusable step runner for Cloudflare Workflows. Simplifies running workflow ste
 ```typescript
 export class Workflow extends WorkflowEntrypoint<Env, Params> {
   async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
-    // Create a configured step runner with shared defaults and error handling.
     const { runStep } = configureStep(step, {
       // Default config applied to all steps (can be overridden per step).
       defaultConfig: {
@@ -54,13 +53,13 @@ export class Workflow extends WorkflowEntrypoint<Env, Params> {
     });
 
     // Run a step with default configuration.
-    const foo = await runStep("fetch foo", async () => {
-      return await fetch("https://example.com/foo").then(response => response.json());
+    const result = await runStep("fetch data", async () => {
+      return await fetch("https://example.com").then(r => r.json());
     });
 
     // Run a step with overridden timeout (other defaults still apply).
-    await runStep("process foo", { timeout: "30 minutes" }, async () => {
-      await saveToDb(foo);
+    await runStep("process data", { timeout: "30 minutes" }, async () => {
+      await saveToDb(result);
     });
   }
 }

@@ -17,7 +17,7 @@ export type ConfigureStepOptions = {
  * @example
  * const { runStep } = configureStep(step, {
  *   defaultConfig: { timeout: "1 minute" },
- *   onError: async (error) => {
+ *   onError: async () => {
  *     await db.job.update({
  *       where: { id },
  *       data: { status: "FAILED" },
