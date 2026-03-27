@@ -54,15 +54,15 @@ export function configureStep(step: WorkflowStep, options: ConfigureStepOptions 
   ): Promise<T> {
     const config = typeof configOrCallback === "function" ? {} : configOrCallback;
     const callback = typeof configOrCallback === "function" ? configOrCallback : maybeCallback!;
-
-    try {
-      return await step.do(name, { ...options.defaultConfig, ...config }, callback);
-    } catch (error) {
-      if (options.onError) {
+    const run = () => step.do(name, { ...options.defaultConfig, ...config }, callback);
+    if (options.onError) {
+      try {
+        return await run();
+      } catch (error) {
         await step.do(`handle error for: ${name}`, () => options.onError!(error));
       }
-      throw error;
     }
+    return await run();
   }
 
   return { runStep };
