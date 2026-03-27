@@ -1,52 +1,27 @@
-# cfw-utils
+# Cloudflare Workers Utilities
 
 A set of utility functions for Cloudflare Workers.
 
-## Installation
+## Install
 
 ```bash
 npm install cfw-utils
 ```
 
-## Usage
-
-### configureStep
-
-Configures a reusable step runner for a Cloudflare Workflow with default config and error handling support.
-
-```typescript
-import { configureStep } from "cfw-utils";
-
-export default class MyWorkflow extends Workflow {
-  async run(ctx: WorkflowStepContext) {
-    const { runStep } = configureStep(ctx.env.WORKFLOW.step, {
-      defaultConfig: { timeout: "1 minute" },
-      onError: async (error) => {
-        await db.job.update({
-          where: { id },
-          data: { status: "FAILED" },
-        });
-      },
-    });
-
-    const result = await runStep("fetch data", async () => {
-      return await fetch("https://example.com").then(r => r.json());
-    });
-  }
-}
+```bash
+pnpm add cfw-utils
 ```
 
-## API
+```bash
+yarn add cfw-utils
+```
 
-### configureStep(step, options)
+Alternatively, you can also just copy and paste the utilities in [src/utils](src/utils) to your project.
 
-- `step` - The workflow step instance from Cloudflare Workers
-- `options` - Configuration options
-  - `defaultConfig` - Default config applied to all steps, can be overridden per step
-  - `onError` - Cleanup callback invoked when any step fails
+## Usage
 
-Returns an object with `runStep` function that mirrors `step.do` signature but supports default config and automatic error handling.
+TODO
 
----
+## License
 
-MIT License - See [LICENSE](./LICENSE) for details.
+MIT © [Lyntor Paul Figueroa](https://github.com/h4ckedneko)
