@@ -20,7 +20,7 @@ Alternatively, you can also just copy and paste the utilities in [src/utils](src
 
 ## Usage
 
-### configureStep
+### configureStep()
 
 A reusable step runner for Cloudflare Workflows. Simplifies running workflow steps with shared default configuration and centralized error handling.
 
@@ -30,57 +30,14 @@ A reusable step runner for Cloudflare Workflows. Simplifies running workflow ste
 - **Error handling** - Automatically execute cleanup logic when any step fails
 - **Familiar API** - Mirrors Cloudflare's `step.do` signature
 
-#### Without the utility
+#### Example
 
 ```typescript
 export class Workflow extends WorkflowEntrypoint<Env, Params> {
   async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
-    try {
-      const foo = await step.do(
-        "fetch foo",
-        {
-          retries: {
-            limit: 10,
-            delay: 1000,
-            backoff: "exponential",
-          },
-          timeout: "5 minutes",
-        },
-        async () => {
-          // very long function...
-        },
-      );
-
-      await step.do(
-        "process foo",
-        {
-          retries: {
-            limit: 10,
-            delay: 1000,
-            backoff: "exponential",
-          },
-          timeout: "1 minute",
-        },
-        async () => {
-          // very long function...
-        },
-      );
-    } catch (error) {
-      step.do("handle failure", async () => {
-        // ...
-      });
-      throw error;
-    }
-  }
-}
-```
-
-#### With the utility
-
-```typescript
-export class Workflow extends WorkflowEntrypoint<Env, Params> {
-  async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
+    // Create a configured step runner with shared defaults and error handling.
     const { runStep } = configureStep(step, {
+      // Default config applied to all steps (can be overridden per step).
       defaultConfig: {
         retries: {
           limit: 10,
@@ -89,17 +46,21 @@ export class Workflow extends WorkflowEntrypoint<Env, Params> {
         },
         timeout: "5 minutes",
       },
+      // Cleanup logic executed when any step fails.
       onError: async (error) => {
-        // handle failure...
+        await setAsFailed();
+        console.error(error);
       },
     });
 
+    // Run a step with default configuration.
     const foo = await runStep("fetch foo", async () => {
-      // very long function..
+      return await fetch("https://example.com/foo").then(response => response.json());
     });
 
-    await runStep("process foo", { timeout: "1 minute" }, async () => {
-      // very long function...
+    // Run a step with overridden timeout (other defaults still apply).
+    await runStep("process foo", { timeout: "30 minutes" }, async () => {
+      await saveToDb(foo);
     });
   }
 }
