@@ -1,11 +1,11 @@
 {
   "name": "cfw-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A set of utility functions for Cloudflare Workers.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/h4ckedneko/cfwutils.git"
+    "url": "git+https://github.com/h4ckedneko/cfw-utils.git"
   },
   "type": "module",
   "main": "./dist/index.cjs",

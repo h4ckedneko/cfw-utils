@@ -1,8 +1,11 @@
-# Cloudflare Workers Utilities
+# cfw-utils
 
-A set of utility functions for Cloudflare Workers.
+[![npm version](https://img.shields.io/npm/v/cfw-utils.svg)](https://www.npmjs.com/package/cfw-utils)
+[![license](https://img.shields.io/npm/l/cfw-utils.svg)](https://github.com/h4ckedneko/cfw-utils/blob/main/LICENSE)
 
-## Installation
+A set of utility functions for working with Cloudflare Workers platform.
+
+## Install
 
 ```bash
 npm install cfw-utils
@@ -18,16 +21,16 @@ yarn add cfw-utils
 
 Alternatively, you can also just copy and paste the utilities in [src/utils](src/utils) to your project.
 
-## Usage
+## Workflows Utilities
 
-### configureStep()
+### `configureStep` and `runStep`
 
-A reusable step runner for Cloudflare Workflows. Simplifies running workflow steps with shared default configuration and centralized error handling.
+Simplifies running workflow steps with shared default configuration and centralized error handling.
 
 #### Features
 
-- **Default config** - Apply consistent timeout, retries, or other settings across all steps
-- **Error handling** - Automatically execute cleanup logic when any step fails
+- **Default Config** - Apply your timeout and retries config across all steps (can be overridden per step)
+- **Error Handling** - Automatically execute cleanup logic when any step fails
 - **Familiar API** - Mirrors Cloudflare's `step.do` signature
 
 #### Example
@@ -45,7 +48,7 @@ export class Workflow extends WorkflowEntrypoint<Env, Params> {
         },
         timeout: "5 minutes",
       },
-      // Cleanup logic executed when any step fails.
+      // Cleanup logic invoked when any step fails.
       onError: async (error) => {
         await setAsFailed();
         console.error(error);

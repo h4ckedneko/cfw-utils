@@ -1,9 +1,9 @@
 import type { WorkflowStep, WorkflowStepConfig, WorkflowStepContext } from "cloudflare:workers";
 
 export type ConfigureStepOptions = {
-  // Default config applied to all steps, can be overridden per step.
+  /** Default config applied to all steps, can be overridden per step. */
   defaultConfig?: WorkflowStepConfig;
-  // Cleanup callback invoked when any step fails. Receives the thrown error.
+  /** Cleanup callback invoked when any step fails. This runs inside a step. */
   onError?: (error: unknown) => Promise<void>;
 };
 
@@ -54,12 +54,13 @@ export function configureStep(step: WorkflowStep, options: ConfigureStepOptions 
   ): Promise<T> {
     const config = typeof configOrCallback === "function" ? {} : configOrCallback;
     const callback = typeof configOrCallback === "function" ? configOrCallback : maybeCallback!;
-    const run = () => step.do(name, { ...options.defaultConfig, ...config }, callback);
-    if (options.onError) {
+    const { defaultConfig, onError } = options;
+    const run = () => step.do(name, { ...defaultConfig, ...config }, callback);
+    if (onError) {
       try {
         return await run();
       } catch (error) {
-        await step.do(`handle error for: ${name}`, () => options.onError!(error));
+        await step.do(`handle error for: ${name}`, () => onError(error));
       }
     }
     return await run();
