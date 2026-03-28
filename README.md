@@ -21,19 +21,21 @@ yarn add cfw-utils
 
 Alternatively, you can also just copy and paste the utilities in [src/utils](src/utils) to your project.
 
-## Workflows Utilities
+## Usage
 
-### `configureStep` and `runStep`
+### Workflows Utilities
+
+#### `configureStep` and `runStep`
 
 Simplifies running workflow steps with shared default configuration and centralized error handling.
 
-#### Features
+##### Features
 
 - **Default Config** - Apply your timeout and retries config across all steps (can be overridden per step)
 - **Error Handling** - Automatically execute cleanup logic when any step fails
 - **Familiar API** - Mirrors Cloudflare's `step.do` signature
 
-#### Example
+##### Example
 
 ```typescript
 export class Workflow extends WorkflowEntrypoint<Env, Params> {
