@@ -3,7 +3,7 @@ import type { WorkflowStep, WorkflowStepConfig, WorkflowStepContext } from "clou
 export type ConfigureStepOptions = {
   /** Default config applied to all steps, can be overridden per step. */
   defaultConfig?: WorkflowStepConfig;
-  /** Cleanup callback invoked when any step fails. This runs inside a step. */
+  /** Cleanup callback invoked when any step fails. */
   onError?: (error: unknown) => Promise<void>;
 };
 
@@ -16,16 +16,20 @@ export type ConfigureStepOptions = {
  *
  * @example
  * const { runStep } = configureStep(step, {
- *   defaultConfig: { timeout: "1 minute" },
+ *   defaultConfig: {
+ *     retries: {
+ *       limit: 3,
+ *       delay: 5000,
+ *       backoff: "constant",
+ *     },
+ *     timeout: "1 minute",
+ *   },
  *   onError: async () => {
- *     await db.job.update({
- *       where: { id },
- *       data: { status: "FAILED" },
- *     });
+ *     markAsFailed();
  *   },
  * });
  *
- * const result = await runStep("fetch data", async () => {
+ * const data = await runStep("fetch data", async () => {
  *   return await fetch("https://example.com").then(r => r.json());
  * });
  */
@@ -52,18 +56,17 @@ export function configureStep(step: WorkflowStep, options: ConfigureStepOptions 
     configOrCallback: WorkflowStepConfig | ((ctx: WorkflowStepContext) => Promise<T>),
     maybeCallback?: (ctx: WorkflowStepContext) => Promise<T>,
   ): Promise<T> {
+    const { defaultConfig, onError } = options;
     const config = typeof configOrCallback === "function" ? {} : configOrCallback;
     const callback = typeof configOrCallback === "function" ? configOrCallback : maybeCallback!;
-    const { defaultConfig, onError } = options;
-    const run = () => step.do(name, { ...defaultConfig, ...config }, callback);
-    if (onError) {
-      try {
-        return await run();
-      } catch (error) {
-        await step.do(`handle error for: ${name}`, () => onError(error));
+    try {
+      return await step.do(name, { ...defaultConfig, ...config }, callback);
+    } catch (error) {
+      if (onError) {
+        onError(error);
       }
+      throw error;
     }
-    return await run();
   }
 
   return { runStep };

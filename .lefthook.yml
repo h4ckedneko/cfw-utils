@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=./node_modules/lefthook/schema.json
-
 pre-commit:
   jobs:
     - name: format

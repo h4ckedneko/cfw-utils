@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "EditorConfig.EditorConfig",
+    "remcohaszing.schemastore",
+    "YoavBls.pretty-ts-errors"
+  ]
+}

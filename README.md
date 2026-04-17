@@ -72,4 +72,4 @@ export class Workflow extends WorkflowEntrypoint<Env, Params> {
 
 ## License
 
-MIT © [Lyntor Paul Figueroa](https://github.com/h4ckedneko)
+MIT
